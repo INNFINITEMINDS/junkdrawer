@@ -4,8 +4,8 @@
 
 > My junk just might be your treasure...
 
-Collection of small scripts and how-to's that do not fall under separate
-projects.
+Collection of small scripts and how-tos that don't neatly fall under
+separate projects.
 
 ---
 
