@@ -1,0 +1,70 @@
+---
+title: "Practical Notes: Erin LeDell on R/h2o (D-Lab: 31 Oct.)"
+author: "[Nima Hejazi](http://nimahejazi.org)"
+date: '`r format(Sys.time(), "%Y %b %d (%a), %H:%M:%S")`'
+output: pdf_document
+toc: true
+theme: journal
+highlight: haddock
+---
+
+# I. Preliminaries
+
+```{r startH2O, eval=FALSE}
+library(h2o)
+localH2O = h2o.init(nthreads = -1)
+```
+
+# II. Modeling Examples
+
+```{r dataLoad, eval=FALSE}
+
+```
+
+```{r useGBM, eval=FALSE}
+y <- "Class"
+x <- setdiff(names(train), y) # design matrix as names of predictors
+
+fit <- h2o.gbm(x = x, y = y, training_frame = train)
+pred <- h2o.predict(fit, test)
+```
+
+```{r gridSearch, eval=FALSE}
+hidden_opt <- list(c(200, 200), c(100, 300, 100), c(500, 500))
+l1_opt <- c(1e-5, 1e-7)
+hyper_params <- list(hidden = hidden_opt, l1 = l1_opt)
+
+grid <- h2o.grid(algorithm = "deeplearning",
+                 hyper_params = hyper_params,
+                 x = x, y = y,
+                 training_frame = train,
+                 validation_frame = valid)
+```
+
+# III. Super Learner and Stacking
+
+```{r SL, eval=FALSE}
+# just a list of models that have already been trained WITH cross-validation
+models <- c(gbm_models, rf_models, dl_models, glm_models)
+
+# note that "stacking" = "super learning"
+stack <- h2o.stack(models = models,
+                   response_frame = train[, y],
+                   metalearner = metalearner)
+```
+
+...
+
+---
+
+\newpage
+
+# IV. Reproducibility Notice
+
+What follows is the _session information_ associated with the R session in which
+this report was compiled:
+
+```{r reproducibility, warning=FALSE, message=FALSE, echo=FALSE}
+library(pander)
+pander::pander(sessionInfo())
+```
